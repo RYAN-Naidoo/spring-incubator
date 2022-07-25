@@ -5,6 +5,7 @@ import entelect.training.incubator.spring.booking.model.BookingCreationDTO;
 import entelect.training.incubator.spring.booking.model.CustomerInfoDTO;
 import entelect.training.incubator.spring.booking.model.ReferenceNumberInfoDTO;
 import entelect.training.incubator.spring.booking.service.BookingService;
+import entelect.training.incubator.spring.booking.service.RestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,13 @@ public class BookingController {
 
     //INJECT INSTANCE OF SERVICE HERE
     private final BookingService bookingService;
+    private  final RestService restService;
 
     //CONSTRUCTOR INJECTION OF SERVICE HERE
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, RestService restService) {
 
         this.bookingService = bookingService;
+        this.restService = restService;
     }
 
     @PostMapping()
@@ -34,7 +37,13 @@ public class BookingController {
 
         final Booking savedBooking = bookingService.createBooking(bookingCreationDTO);
 
-        return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
+        if (savedBooking != null){
+            LOGGER.trace("Booking created as {}", savedBooking);
+            return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
+        }
+
+        LOGGER.info("Booking could not be created, either flight or customer do not exist");
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping()
@@ -89,6 +98,19 @@ public class BookingController {
         LOGGER.info("No bookings found");
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/GetOther")
+    public ResponseEntity<?> testFunction(){
+
+        //Test flight check
+        LOGGER.info(restService.validateCustomer(1));
+
+        // Test customer check
+        LOGGER.info(restService.validateFlight(2));
+
+        return new ResponseEntity<>("Testing Completed", HttpStatus.CREATED);
+    }
+
 
     //REQUIRED FUNCTIONS
 /*

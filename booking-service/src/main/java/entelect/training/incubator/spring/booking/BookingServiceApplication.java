@@ -1,5 +1,7 @@
 package entelect.training.incubator.spring.Booking;
 
+import entelect.training.incubator.spring.flight.FlightServiceApplication;
+import entelect.training.incubator.spring.customer.CustomerServiceApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
